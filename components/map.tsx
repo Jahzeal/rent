@@ -6,8 +6,8 @@ import mapboxgl from "mapbox-gl";
 interface MapProps {
   center?: { lng: number; lat: number } | null;
   locationName?: string;
-  height?: string; // optional dynamic height
-  zoom?: number;   // optional zoom
+  height?: string; 
+  zoom?: number;   
 }
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
@@ -17,20 +17,18 @@ export default function Map({ center, locationName, height = "500px", zoom = 12 
   const mapInstance = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
 
-  // Initialize Map once
   useEffect(() => {
     if (!mapContainer.current || mapInstance.current) return;
 
     mapInstance.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [0, 0], // default neutral start
+      center: [0, 0], 
       zoom: 2,
     });
 
     mapInstance.current.addControl(new mapboxgl.NavigationControl());
 
-    // Observe container for resize to prevent white space
     const observer = new ResizeObserver(() => mapInstance.current?.resize());
     observer.observe(mapContainer.current);
 
@@ -40,13 +38,11 @@ export default function Map({ center, locationName, height = "500px", zoom = 12 
     };
   }, []);
 
-  // Update map center, marker, and popup
   useEffect(() => {
     if (!mapInstance.current || !center) return;
 
     mapInstance.current.flyTo({ center: [center.lng, center.lat], zoom, essential: true });
 
-    // Marker handling
     if (markerRef.current) {
       markerRef.current.setLngLat([center.lng, center.lat]);
 

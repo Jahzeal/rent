@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { Search, ChevronDown, X, Dog, Cat, CircleSlash } from "lucide-react";
 import { Button } from "./ui/button";
 
-// -------------------- FilterButton --------------------
-
 interface FilterProps {
   label: string;
   options?: string[];
@@ -71,7 +69,7 @@ const FilterButton = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-1 left-0 bg-white border border-border rounded-lg shadow-lg z-10 min-w-max p-3">
+        <div className="absolute top-full mt-1 left-0 sm:left-0 right-0 sm:right-auto bg-white border border-border rounded-lg shadow-lg z-20 w-[220px] sm:w-auto p-3">
           {isPrice ? (
             <div className="flex flex-col gap-2">
               <input
@@ -112,8 +110,6 @@ const FilterButton = ({
     </div>
   );
 };
-
-// -------------------- MoreOptionsModal (Zillow-free) --------------------
 
 interface MoreOptionsModalProps {
   isOpen: boolean;
@@ -188,8 +184,8 @@ const MoreOptionsModal = ({
         className="fixed inset-0 bg-black/50 z-40 md:hidden"
         onClick={onClose}
       />
-      <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4">
-        <div className="w-full md:max-w-2xl bg-white rounded-t-2xl md:rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 w-full">
+        <div className="w-full md:max-w-2xl bg-white rounded-t-2xl md:rounded-lg shadow-xl max-h-[92vh] overflow-y-auto mx-auto">
           <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-border bg-white">
             <h2 className="text-lg md:text-xl font-semibold text-foreground">
               More options
@@ -320,8 +316,6 @@ const MoreOptionsModal = ({
   );
 };
 
-// -------------------- SearchBar --------------------
-
 interface SearchBarProps {
   onSearch: (location: string, coords?: { lng: number; lat: number }) => void;
   onFiltersChange?: (filters: AppliedFilters) => void;
@@ -396,7 +390,7 @@ export default function SearchBar({
   const handlePriceApply = (min: number, max: number) => {
     const updated = { ...appliedFilters, price: { min, max } };
     setAppliedFilters(updated);
-    onFiltersChange?.(updated); // Safe, because it's outside setState updater
+    onFiltersChange?.(updated);
   };
 
   const handleBedsSelect = (beds: string) => {
@@ -418,7 +412,6 @@ export default function SearchBar({
   };
 
   const handleSaveChanges = () => {
-    // All filters are already applied in state
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };
@@ -426,8 +419,8 @@ export default function SearchBar({
   return (
     <>
       <div className="bg-white border-b border-border">
-        <div className="max-w-full px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3 sm:mb-0">
+        <div className="max-w-full px-3 sm:px-6 lg:px-8 py-3 sm:py-4 w-full overflow-hidden">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3 sm:mb-0 w-full">
             <div className="flex-1 flex items-center gap-2 bg-white border border-border rounded-lg px-3 sm:px-4 py-2">
               <input
                 type="text"
@@ -460,7 +453,7 @@ export default function SearchBar({
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 lg:gap-3 flex-wrap mt-3">
+          <div className="hidden sm:flex items-center gap-2 lg:gap-3 flex-wrap mt-3 w-full">
             <Button
               variant={selectedCategory === "houses" ? "default" : "outline"}
               onClick={() => setSelectedCategory("houses")}
@@ -495,7 +488,7 @@ export default function SearchBar({
             </button>
             <button
               onClick={handleSaveChanges}
-              className="px-4 md:px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg text-xs sm:text-sm hover:opacity-90 whitespace-nowrap transition-all"
+              className="px-4 md:px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg text-xs sm:text-sm hover:opacity-90 whitespace-nowrap transition-all flex-shrink-0"
             >
               {isSaved ? "Saved ✅" : "Save changes"}
             </button>

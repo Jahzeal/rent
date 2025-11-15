@@ -16,28 +16,29 @@ export default function Header() {
 
   return (
     <header className="border-b border-border bg-white sticky top-0 z-40">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-full px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          
+          {/* LOGO */}
           <div className="flex items-center gap-2">
             <div className="text-primary font-bold text-2xl">Z</div>
-            <span className="font-semibold text-lg hidden sm:inline"></span>
+            <span className="font-semibold hidden sm:inline text-lg"></span>
           </div>
 
-          {/* Navigation - Hidden on mobile */}
+          {/* DESKTOP NAV */}
           <nav className="hidden md:flex items-center gap-8 flex-1 ml-12">
             {navItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="text-foreground hover:text-primary font-medium text-sm transition-colors"
+                className="text-foreground hover:text-primary font-medium text-sm transition-colors whitespace-nowrap"
               >
                 {item.label}
               </a>
             ))}
           </nav>
 
-          {/* Right side menu - Desktop */}
+          {/* DESKTOP ACTION BUTTONS */}
           <div className="hidden sm:flex items-center gap-4 md:gap-6">
             <button className="text-foreground hover:text-primary font-medium text-sm transition-colors">
               Manage rentals
@@ -48,10 +49,12 @@ export default function Header() {
             <button className="text-foreground hover:text-primary font-medium text-sm transition-colors">
               Get help
             </button>
-            <button className="text-primary font-semibold text-sm hover:opacity-80 transition-opacity">Sign in</button>
+            <button className="text-primary font-semibold text-sm hover:opacity-80 transition-opacity">
+              Sign in
+            </button>
           </div>
 
-          {/* Mobile menu button */}
+          {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"
@@ -65,9 +68,14 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-border pt-4 space-y-3">
+        {/* MOBILE MENU */}
+        <div
+          className={`md:hidden transition-all duration-300 overflow-hidden ${
+            mobileMenuOpen ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="pb-4 border-t border-border pt-4 space-y-3">
+
             {navItems.map((item) => (
               <a
                 key={item.label}
@@ -78,7 +86,10 @@ export default function Header() {
                 {item.label}
               </a>
             ))}
+
             <hr className="border-border" />
+
+            {/* MOBILE ACTION BUTTONS */}
             <button className="w-full text-left text-foreground hover:text-primary font-medium text-sm py-2 transition-colors">
               Manage rentals
             </button>
@@ -91,8 +102,9 @@ export default function Header() {
             <button className="w-full text-left text-primary font-semibold text-sm py-2 hover:opacity-80 transition-opacity">
               Sign in
             </button>
+
           </div>
-        )}
+        </div>
       </div>
     </header>
   )

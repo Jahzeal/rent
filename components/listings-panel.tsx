@@ -385,7 +385,6 @@ export default function ListingsPanel({
       );
     }
 
-    
     switch (sortBy) {
       case "price-low":
         results.sort((a, b) => a.price - b.price);
@@ -417,11 +416,14 @@ export default function ListingsPanel({
   const listingCount = filteredListings.length;
 
   return (
-    <div className="bg-white">
-      <div className="sticky top-0 bg-white border-b border-border p-4 sm:p-6 z-10">
+    <div className="bg-white w-full h-full flex flex-col">
+      {/* ─── HEADER (Sticky Top) ─────────────────────────────── */}
+      {/* ─── HEADER (Sticky Top) ─────────────────────────────── */}
+      <div className="sticky top-0 bg-white border-b p-4 sm:p-6 z-20">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
+          {/* Left Section – Title & Count */}
+          <div className="flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               Rental Listings
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
@@ -432,30 +434,45 @@ export default function ListingsPanel({
                 : `${listingCount} rentals available`}
             </p>
           </div>
-          <select
-            value={sortBy}
-            onChange={(e) =>
-              setSortBy(
-                e.target.value as
-                  | "recommended"
-                  | "price-low"
-                  | "price-high"
-                  | "newest"
-                  | "lot-size"
-              )
-            }
-            className="text-primary font-semibold text-sm hover:underline whitespace-nowrap cursor-pointer px-2 py-1 bg-white border border-primary rounded"
-          >
-            <option value="recommended">Sort: Recommended</option>
-            <option value="price-low"> Payment (Low to High)</option>
-            <option value="price-high"> Payment (High to Low)</option>
-            <option value="newest"> Newest</option>
-            <option value="lot-size"> Lot size</option>
-          </select>
+
+          {/* Right Section – Sort Dropdown */}
+          <div className="w-full sm:w-auto sm:flex-shrink-0">
+            <select
+              value={sortBy}
+              onChange={(e) =>
+                setSortBy(
+                  e.target.value as
+                    | "recommended"
+                    | "price-low"
+                    | "price-high"
+                    | "newest"
+                    | "lot-size"
+                )
+              }
+              className="
+          w-full sm:w-48
+          text-primary 
+          font-semibold 
+          text-sm 
+          cursor-pointer 
+          px-3 py-2
+          border border-primary 
+          rounded-md
+          bg-white
+        "
+            >
+              <option value="recommended">Sort: Recommended</option>
+              <option value="price-low">Payment (Low to High)</option>
+              <option value="price-high">Payment (High to Low)</option>
+              <option value="newest">Newest</option>
+              <option value="lot-size">Lot size</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div className="divide-y divide-border">
+      {/* ─── LISTINGS ────────────────────────────────────────── */}
+      <div className="flex-1 divide-y overflow-y-auto">
         {filteredListings.length > 0 ? (
           filteredListings.map((listing) => (
             <ListingCard
@@ -467,16 +484,18 @@ export default function ListingsPanel({
             />
           ))
         ) : (
-          <div className="p-4 sm:p-6 text-center text-muted-foreground">
+          <div className="p-6 text-center text-muted-foreground">
             <p className="text-sm">No listings found for "{searchLocation}"</p>
             <p className="text-xs mt-2">Try adjusting your filters or search</p>
           </div>
         )}
       </div>
+
+      {/* ─── DETAILS MODAL ───────────────────────────────────── */}
       {selectedListing && (
         <ListingDetailsModal
           listing={{
-            id: Number(selectedListing.id), 
+            id: Number(selectedListing.id),
             title: selectedListing.title,
             location: selectedListing.location,
             price: `$${selectedListing.price}`,
