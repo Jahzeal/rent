@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, ChevronDown, X, Dog, Cat, CircleSlash } from "lucide-react";
+import { Search, ChevronDown, X, Dog, Cat, CircleSlash } from 'lucide-react';
 import { Button } from "./ui/button";
+import PriceRangeModal from "./price-range-modal";
+import BedsBathsModal from "./baths-bed-modal";
+import PropertyTypeModal from "./property-type-modal";
 
 interface FilterProps {
   label: string;
@@ -69,7 +72,7 @@ const FilterButton = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-1 left-0 sm:left-0 right-0 sm:right-auto bg-white border border-border rounded-lg shadow-lg z-20 w-[220px] sm:w-auto p-3">
+        <div className="absolute top-full mt-1 left-0 sm:left-0 right-0 sm:right-auto bg-white border border-border rounded-lg shadow-lg z-50 w-[220px] sm:w-auto p-3">
           {isPrice ? (
             <div className="flex flex-col gap-2">
               <input
@@ -131,7 +134,11 @@ const MoreOptionsModal = ({
   isOpen,
   onClose,
   onApply,
-}: MoreOptionsModalProps) => {
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: (filters: MoreOptionsFilters) => void;
+}) => {
   const [moveInDate, setMoveInDate] = useState("");
   const [selectedPets, setSelectedPets] = useState<string[]>([]);
   const [shortTermLease, setShortTermLease] = useState(false);
@@ -335,6 +342,9 @@ export default function SearchBar({
   const [mounted, setMounted] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+  const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
+  const [isBedsBathsModalOpen, setIsBedsBathsModalOpen] = useState(false);
+  const [isPropertyTypeModalOpen, setIsPropertyTypeModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -370,36 +380,35 @@ export default function SearchBar({
       if (data.features && data.features.length > 0) {
         const [lng, lat] = data.features[0].geometry.coordinates;
         const placeName = data.features[0].place_name;
-        console.log("[v0] Geocoded location:", { lng, lat, placeName });
         onSearch(placeName, { lng, lat });
       } else {
-        console.log("[v0] No results found for location");
         onSearch(location);
       }
     } catch (error) {
-      console.log("[v0] Geocoding error:", error);
       onSearch(location);
     } finally {
       setIsSearching(false);
     }
   };
+
   const handleSearch = () => {
     if (!searchInput.trim()) return;
     geocodeLocation(searchInput);
   };
+
   const handlePriceApply = (min: number, max: number) => {
     const updated = { ...appliedFilters, price: { min, max } };
     setAppliedFilters(updated);
     onFiltersChange?.(updated);
   };
 
-  const handleBedsSelect = (beds: string) => {
+  const handleBedsApply = (beds: string) => {
     const updated = { ...appliedFilters, beds };
     setAppliedFilters(updated);
     onFiltersChange?.(updated);
   };
 
-  const handlePropertyTypeSelect = (propertyType: string) => {
+  const handlePropertyTypeApply = (propertyType: string) => {
     const updated = { ...appliedFilters, propertyType };
     setAppliedFilters(updated);
     onFiltersChange?.(updated);
@@ -468,17 +477,29 @@ export default function SearchBar({
             >
               Shortlets
             </Button>
-            <FilterButton label="Price" isPrice onApply={handlePriceApply} />
-            <FilterButton
-              label="Beds & baths"
-              options={["Any", "1 bed", "2 beds", "3+ beds"]}
-              onSelect={handleBedsSelect}
-            />
-            <FilterButton
-              label="Property type"
-              options={["All types", "Apartment", "House", "Condo"]}
-              onSelect={handlePropertyTypeSelect}
-            />
+            <button
+              onClick={() => setIsPriceModalOpen(true)}
+              className="flex items-center gap-2 px-3 md:px-4 py-2 bg-white border border-border rounded-lg text-foreground hover:bg-muted text-xs sm:text-sm font-medium whitespace-nowrap z-20"
+            >
+              Price
+              <ChevronDown size={16} />
+            </button>
+            <button
+              onClick={() => setIsBedsBathsModalOpen(true)}
+              className="flex items-center gap-2 px-3 md:px-4 py-2 bg-white border border-border rounded-lg text-foreground hover:bg-muted text-xs sm:text-sm font-medium whitespace-nowrap z-20"
+            >
+              Beds & baths
+              {appliedFilters.beds !== "Any" && `: ${appliedFilters.beds}`}
+              <ChevronDown size={16} />
+            </button>
+            <button
+              onClick={() => setIsPropertyTypeModalOpen(true)}
+              className="flex items-center gap-2 px-3 md:px-4 py-2 bg-white border border-border rounded-lg text-foreground hover:bg-muted text-xs sm:text-sm font-medium whitespace-nowrap z-20"
+            >
+              Property type
+              {appliedFilters.propertyType !== "All types" && `: ${appliedFilters.propertyType}`}
+              <ChevronDown size={16} />
+            </button>
             <button
               onClick={() => setIsMoreOptionsOpen(true)}
               className="flex items-center gap-2 px-3 md:px-4 py-2 bg-white border border-border rounded-lg text-foreground hover:bg-muted text-xs sm:text-sm font-medium whitespace-nowrap"
@@ -554,6 +575,22 @@ export default function SearchBar({
           )}
         </div>
       </div>
+
+      <PriceRangeModal
+        isOpen={isPriceModalOpen}
+        onClose={() => setIsPriceModalOpen(false)}
+        onApply={handlePriceApply}
+      />
+      <BedsBathsModal
+        isOpen={isBedsBathsModalOpen}
+        onClose={() => setIsBedsBathsModalOpen(false)}
+        onApply={handleBedsApply}
+      />
+      <PropertyTypeModal
+        isOpen={isPropertyTypeModalOpen}
+        onClose={() => setIsPropertyTypeModalOpen(false)}
+        onApply={handlePropertyTypeApply}
+      />
 
       <MoreOptionsModal
         isOpen={isMoreOptionsOpen}

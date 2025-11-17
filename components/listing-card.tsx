@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Heart, ChevronLeft, ChevronRight } from "lucide-react"
+import { Heart, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface Listing {
   id: string
@@ -50,10 +50,9 @@ export default function ListingCard({
     <div className="p-3 sm:p-4 md:p-6 hover:bg-muted/30 transition-colors rounded-lg cursor-pointer border-b">
       <div className="flex flex-col sm:flex-row gap-4">
         
-        {/* IMAGE AREA */}
-        <div className="relative w-full sm:w-48 h-48 sm:h-40 rounded-lg overflow-hidden bg-gray-200 group flex-shrink-0">
+        <div className="relative w-full sm:w-64 h-56 sm:h-48 rounded-lg overflow-hidden bg-gray-200 group flex-shrink-0">
           <img
-            src={images[currentImageIndex]}
+            src={images[currentImageIndex] || "/placeholder.svg"}
             alt={listing.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -71,7 +70,6 @@ export default function ListingCard({
             )}
           </div>
 
-          {/* Favorite Button */}
           <button
             onClick={onFavoriteToggle}
             className="absolute top-3 right-3 p-2 bg-white rounded-full hover:bg-muted transition-colors shadow"
@@ -79,7 +77,6 @@ export default function ListingCard({
             <Heart size={20} className={isFavorited ? "fill-red-500 text-red-500" : "text-foreground"} />
           </button>
 
-          {/* Carousel Controls */}
           {images.length > 1 && (
             <>
               <button
@@ -103,7 +100,6 @@ export default function ListingCard({
           )}
         </div>
 
-        {/* DETAILS AREA */}
         <div className="flex-1">
           <h3 className="font-semibold text-base md:text-lg text-foreground mb-1">
             ${listing.price}+ • {listing.bedrooms} bd
@@ -127,7 +123,6 @@ export default function ListingCard({
             ))}
           </div>
 
-          {/* VIEW DETAILS */}
           {onViewDetails && (
             <button onClick={onViewDetails} className="mt-3 text-primary font-semibold text-sm hover:underline">
               View Details →

@@ -19,13 +19,11 @@ export default function Header() {
       <div className="max-w-full px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between">
           
-          {/* LOGO */}
           <div className="flex items-center gap-2">
             <div className="text-primary font-bold text-2xl">Z</div>
             <span className="font-semibold hidden sm:inline text-lg"></span>
           </div>
 
-          {/* DESKTOP NAV */}
           <nav className="hidden md:flex items-center gap-8 flex-1 ml-12">
             {navItems.map((item) => (
               <a
@@ -38,7 +36,6 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* DESKTOP ACTION BUTTONS */}
           <div className="hidden sm:flex items-center gap-4 md:gap-6">
             <button className="text-foreground hover:text-primary font-medium text-sm transition-colors">
               Manage rentals
@@ -54,7 +51,6 @@ export default function Header() {
             </button>
           </div>
 
-          {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"
@@ -68,7 +64,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* MOBILE MENU */}
         <div
           className={`md:hidden transition-all duration-300 overflow-hidden ${
             mobileMenuOpen ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0"
@@ -89,7 +84,6 @@ export default function Header() {
 
             <hr className="border-border" />
 
-            {/* MOBILE ACTION BUTTONS */}
             <button className="w-full text-left text-foreground hover:text-primary font-medium text-sm py-2 transition-colors">
               Manage rentals
             </button>

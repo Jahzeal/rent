@@ -417,13 +417,12 @@ export default function ListingsPanel({
 
   return (
     <div className="bg-white w-full h-full flex flex-col">
-      {/* ─── HEADER (Sticky Top) ─────────────────────────────── */}
-      {/* ─── HEADER (Sticky Top) ─────────────────────────────── */}
+    
       <div className="sticky top-0 bg-white border-b p-4 sm:p-6 z-20">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           {/* Left Section – Title & Count */}
           <div className="flex-1">
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-5xl font-bold text-foreground">
               Rental Listings
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
@@ -435,7 +434,6 @@ export default function ListingsPanel({
             </p>
           </div>
 
-          {/* Right Section – Sort Dropdown */}
           <div className="w-full sm:w-auto sm:flex-shrink-0">
             <select
               value={sortBy}
@@ -471,7 +469,6 @@ export default function ListingsPanel({
         </div>
       </div>
 
-      {/* ─── LISTINGS ────────────────────────────────────────── */}
       <div className="flex-1 divide-y overflow-y-auto">
         {filteredListings.length > 0 ? (
           filteredListings.map((listing) => (
@@ -491,7 +488,7 @@ export default function ListingsPanel({
         )}
       </div>
 
-      {/* ─── DETAILS MODAL ───────────────────────────────────── */}
+        //Listing Details Modal
       {selectedListing && (
         <ListingDetailsModal
           listing={{
