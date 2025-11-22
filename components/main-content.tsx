@@ -1,32 +1,27 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import Map from "./map";
-import ListingsPanel from "./listings-panel";
+import { useEffect, useState } from "react"
+import Map from "./map"
+import ListingsPanel from "./listings-panel"
 
 interface MainContentProps {
-  location: { lng: number; lat: number } | null;
-  locationName: string;
-  filters?: any;
+  location: { lng: number; lat: number } | null
+  locationName: string
+  filters?: any
 }
 
-export default function MainContent({
-  location,
-  locationName,
-  filters,
-}: MainContentProps) {
-  const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
+export default function MainContent({ location, locationName, filters }: MainContentProps) {
+  const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false)
 
   useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)");
-    const handleChange = (e: MediaQueryListEvent) =>
-      setIsLargeScreen(e.matches);
+    const mql = window.matchMedia("(min-width: 1024px)")
+    const handleChange = (e: MediaQueryListEvent) => setIsLargeScreen(e.matches)
 
-    setIsLargeScreen(mql.matches); 
-    mql.addEventListener("change", handleChange);
+    setIsLargeScreen(mql.matches)
+    mql.addEventListener("change", handleChange)
 
-    return () => mql.removeEventListener("change", handleChange);
-  }, []);
+    return () => mql.removeEventListener("change", handleChange)
+  }, [])
 
   return (
     <div className="flex flex-col lg:flex-row w-full h-full bg-gray-50 overflow-hidden">
@@ -38,5 +33,5 @@ export default function MainContent({
         <ListingsPanel searchLocation={locationName} filters={filters} />
       </div>
     </div>
-  );
+  )
 }
