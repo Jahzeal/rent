@@ -3,30 +3,22 @@
 import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
+import SocialButton from "@/components/SocialButton"; // Assuming this component is defined elsewhere
+import { useAuth } from "@/hooks/useAuth";
 
-interface SocialButtonProps {
-  icon: React.ReactNode
-  text: string
-}
-
-const SocialButton: React.FC<SocialButtonProps> = ({ icon, text }) => (
-  <button className="flex items-center justify-center w-full py-3 px-4 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
-    {icon}
-    <span className="ml-2">{text}</span>
-  </button>
-)
 
 export default function SignupPage() {
-  const [emailSubmitted, setEmailSubmitted] = useState(false)
+  const { signUp, loading, error } = useAuth();
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
     lastName: "",
     password: "",
-    confirmPassword: "",
-  })
+    confirmPassword: "", // Correctly tracking confirmPassword
+  });
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false) // State for Confirm Password visibility
 
   const handleEmailContinue = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,14 +35,26 @@ export default function SignupPage() {
     }))
   }
 
-  const handleSignUp = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match")
-      return
+      alert("Passwords do not match");
+      return;
     }
-    console.log("Signing up with:", formData)
+    try {
+      const result = await signUp({
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        password: formData.password,
+      });
+      console.log("Signing up with:", result);
+    } catch (err) {
+      console.error("Sign up error:", err);
+    }
   }
+
+  // --- SVG Icons (Unchanged, included for completeness) ---
 
   const googleIcon = (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -98,6 +102,7 @@ export default function SignupPage() {
           </h2>
 
           <form className="space-y-4" onSubmit={emailSubmitted ? handleSignUp : handleEmailContinue}>
+            {/* Email Field (Always visible) */}
             <div>
               <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email Address <span className="text-red-500">*</span>
@@ -116,17 +121,19 @@ export default function SignupPage() {
               />
             </div>
 
+            {/* Name and Password Fields (Only visible after email submitted) */}
             {emailSubmitted && (
               <>
+                {/* First Name Field */}
                 <div>
                   <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
-                    Full Name <span className="text-red-500">*</span>
+                    First Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="firstName"
                     name="firstName"
                     type="text"
-                    placeholder="FirstName"
+                    placeholder="John"
                     value={formData.firstName}
                     onChange={handleChange}
                     required
@@ -135,7 +142,8 @@ export default function SignupPage() {
                   />
                 </div>
 
-                {/* <div>
+                {/* Last Name Field */}
+                <div>
                   <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
                     Last Name <span className="text-red-500">*</span>
                   </label>
@@ -149,8 +157,9 @@ export default function SignupPage() {
                     required
                     className="w-full mt-1 p-3 border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
-                </div> */}
+                </div>
 
+                {/* Password Field */}
                 <div>
                   <label htmlFor="password" className="text-sm font-medium text-gray-700">
                     Password <span className="text-red-500">*</span>
@@ -174,17 +183,17 @@ export default function SignupPage() {
                       {showPassword ? "Hide" : "Show"}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
                 </div>
 
-                {/* <div>
+                {/* Confirm Password Field (Restored and Corrected) */}
+                <div>
                   <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
                     Confirm Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative mt-1">
                     <input
                       id="confirmPassword"
-                      name="confirmPassword"
+                      name="confirmPassword" // Correct name attribute
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm password"
                       value={formData.confirmPassword}
@@ -200,17 +209,21 @@ export default function SignupPage() {
                       {showConfirmPassword ? "Hide" : "Show"}
                     </button>
                   </div>
-                </div> */}
+                  <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
+                </div>
               </>
             )}
 
+            {/* Submit Button */}
             <button
               type="submit"
               className="w-full mt-4 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors text-sm"
+              disabled={loading}
             >
-              {emailSubmitted ? "Create account" : "Continue"}
+              {loading ? "Loading..." : emailSubmitted ? "Create account" : "Continue"}
             </button>
 
+            {/* Back Button */}
             {emailSubmitted && (
               <button
                 type="button"
@@ -220,8 +233,12 @@ export default function SignupPage() {
                 Back
               </button>
             )}
+            
+            {/* Error Message */}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
           </form>
 
+          {/* Social Sign Up and Links (Only visible before email submitted) */}
           {!emailSubmitted && (
             <>
               <p className="pt-3 text-xs sm:text-sm text-gray-700 text-center">
@@ -231,7 +248,6 @@ export default function SignupPage() {
                 </Link>
               </p>
 
-             
               <div className="flex items-center space-x-3 my-4">
                 <div className="flex-1 border-t border-gray-300"></div>
                 <span className="text-xs font-medium text-gray-500">OR</span>
