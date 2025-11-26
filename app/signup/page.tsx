@@ -1,138 +1,124 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import Link from "next/link"
-import SocialButton from "@/components/SocialButton"; // Assuming this component is defined elsewhere
+import React, { useState } from "react";
+import Link from "next/link";
+import SocialButton from "@/components/SocialButton";
 import { useAuth } from "@/hooks/useAuth";
-
 
 export default function SignupPage() {
   const { signUp, loading, error } = useAuth();
-  const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  const [step, setStep] = useState<"email" | "details">("email");
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
     lastName: "",
     password: "",
-    confirmPassword: "", // Correctly tracking confirmPassword
+    confirmPassword: "",
   });
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false) // State for Confirm Password visibility
 
-  const handleEmailContinue = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (formData.email.trim()) {
-      setEmailSubmitted(true)
-    }
-  }
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEmailContinue = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.email.trim()) return;
+    setStep("details");
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
+
     try {
-      const result = await signUp({
+      console.log("Signing up with:", formData);
+      await signUp({
         email: formData.email,
         firstName: formData.firstName,
         lastName: formData.lastName,
         password: formData.password,
       });
-      console.log("Signing up with:", result);
+      // Optionally redirect after successful signup
+      // router.push("/signin");
     } catch (err) {
       console.error("Sign up error:", err);
     }
-  }
-
-  // --- SVG Icons (Unchanged, included for completeness) ---
+  };
 
   const googleIcon = (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M23.94 12.285c0-.987-.087-1.95-.246-2.887H12v5.477h6.436c-.279 1.385-1.096 2.57-2.316 3.486v4.38h5.642c3.308-3.05 5.228-7.53 5.228-12.016z"
-        fill="#4285F4"
-      />
-      <path
-        d="M12 24c3.24 0 5.955-1.077 7.94-2.923l-5.642-4.38c-1.554 1.04-3.535 1.657-5.32 1.657-4.108 0-7.59-2.793-8.835-6.577H1.52v4.527C3.593 21.05 7.42 24 12 24z"
-        fill="#34A853"
-      />
-      <path
-        d="M3.165 14.577c-.247-.73-.39-1.503-.39-2.285s.143-1.555.39-2.285V5.485H1.52c-.886 1.764-1.35 3.79-1.35 5.928s.464 4.164 1.35 5.928l1.645-4.76z"
-        fill="#FBBC05"
-      />
-      <path
-        d="M12 4.715c2.213 0 4.19.82 5.73 2.215L21.36 3.65C19.167 1.41 15.82 0 12 0 7.42 0 3.593 2.95 1.52 7.072l1.645 4.76c1.245-3.784 4.727-6.577 8.835-6.577z"
-        fill="#EA4335"
-      />
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M23.94 12.285c0-.987-.087-1.95-.246-2.887H12v5.477h6.436c-.279 1.385-1.096 2.57-2.316 3.486v4.38h5.642c3.308-3.05 5.228-7.53 5.228-12.016z" fill="#4285F4" />
+      <path d="M12 24c3.24 0 5.955-1.077 7.94-2.923l-5.642-4.38c-1.554 1.04-3.535 1.657-5.32 1.657-4.108 0-7.59-2.793-8.835-6.577H1.52v4.527C3.593 21.05 7.42 24 12 24z" fill="#34A853" />
+      <path d="M3.165 14.577c-.247-.73-.39-1.503-.39-2.285s.143-1.555.39-2.285V5.485H1.52c-.886 1.764-1.35 3.79-1.35 5.928s.464 4.164 1.35 5.928l1.645-4.76z" fill="#FBBC05" />
+      <path d="M12 4.715c2.213 0 4.19.82 5.73 2.215L21.36 3.65C19.167 1.41 15.82 0 12 0 7.42 0 3.593 2.95 1.52 7.072l1.645 4.76c1.245-3.784 4.727-6.577 8.835-6.577z" fill="#EA4335" />
     </svg>
-  )
+  );
 
   const appleIcon = (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
       <path d="M17.51 11.02c.03-1.89-.92-3.69-2.58-4.78-1.55-1.02-3.78-1.24-5.37-.23-1.63 1.05-2.59 2.87-2.67 4.79-.06 1.31.33 2.68.99 3.93.9 1.72 1.94 3.49 3.53 3.46 1.59-.03 2.37-1.31 3.94-1.31 1.57 0 2.39 1.31 3.93 1.28 1.56-.03 2.6-1.77 3.49-3.48.66-1.25 1.05-2.62.99-3.93zM15.53 2.84c.83-.98 1.48-2.23 1.36-3.84-.96.06-2.14.73-3.15 1.76-1.07 1.05-1.73 2.45-1.58 3.96 1.05.03 2.22-.64 3.37-1.88z" />
     </svg>
-  )
+  );
 
   const facebookIcon = (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
       <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.35C0 23.407.593 24 1.325 24h11.496V14.67H9.274V10.237h3.547V7.072c0-3.51 2.12-5.422 5.257-5.422 1.49 0 2.76.11 3.13.16v3.62h-2.15c-1.69 0-2.02.81-2.02 1.99v2.66h4.03l-.64 4.43h-3.39V24h6.052c.732 0 1.325-.593 1.325-1.325V1.325C24 .593 23.407 0 22.675 0z" />
     </svg>
-  )
+  );
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-white">
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 bg-white">
+    <div className="flex flex-col lg:flex-row min-h-screen w-screen bg-white">
+      {/* Left form side */}
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 py-10 overflow-auto">
         <div className="w-full max-w-sm">
-          <div className="mb-4">
-            <span className="text-3xl font-bold text-blue-600">Zillow</span>
-          </div>
+          <div className="mb-4 text-3xl font-bold text-blue-600">Zillow</div>
 
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">
-            {emailSubmitted ? "Tell us about yourself" : "Create account"}
+            {step === "email" ? "Create account" : "Tell us about yourself"}
           </h2>
 
-          <form className="space-y-4" onSubmit={emailSubmitted ? handleSignUp : handleEmailContinue}>
-            {/* Email Field (Always visible) */}
+          <form
+            onSubmit={step === "email" ? handleEmailContinue : handleSignUp}
+            className="space-y-4"
+          >
+            {/* Email */}
             <div>
               <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email Address <span className="text-red-500">*</span>
               </label>
               <input
-                id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
-                placeholder="Enter your email address"
+                name="email"
+                id="email"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
-                disabled={emailSubmitted}
                 required
+                disabled={step === "details"}
                 className="w-full mt-1 p-3 border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-50 disabled:text-gray-500"
               />
             </div>
 
-            {/* Name and Password Fields (Only visible after email submitted) */}
-            {emailSubmitted && (
+            {/* Details */}
+            {step === "details" && (
               <>
-                {/* First Name Field */}
                 <div>
                   <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
                     First Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    id="firstName"
-                    name="firstName"
                     type="text"
+                    name="firstName"
+                    id="firstName"
                     placeholder="John"
                     value={formData.firstName}
                     onChange={handleChange}
@@ -142,15 +128,14 @@ export default function SignupPage() {
                   />
                 </div>
 
-                {/* Last Name Field */}
                 <div>
                   <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
                     Last Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    id="lastName"
-                    name="lastName"
                     type="text"
+                    name="lastName"
+                    id="lastName"
                     placeholder="Doe"
                     value={formData.lastName}
                     onChange={handleChange}
@@ -159,16 +144,15 @@ export default function SignupPage() {
                   />
                 </div>
 
-                {/* Password Field */}
                 <div>
                   <label htmlFor="password" className="text-sm font-medium text-gray-700">
                     Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative mt-1">
                     <input
-                      id="password"
-                      name="password"
                       type={showPassword ? "text" : "password"}
+                      name="password"
+                      id="password"
                       placeholder="Enter password"
                       value={formData.password}
                       onChange={handleChange}
@@ -185,16 +169,15 @@ export default function SignupPage() {
                   </div>
                 </div>
 
-                {/* Confirm Password Field (Restored and Corrected) */}
                 <div>
                   <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
                     Confirm Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative mt-1">
                     <input
-                      id="confirmPassword"
-                      name="confirmPassword" // Correct name attribute
                       type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      id="confirmPassword"
                       placeholder="Confirm password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
@@ -214,32 +197,32 @@ export default function SignupPage() {
               </>
             )}
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
-              className="w-full mt-4 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors text-sm"
               disabled={loading}
+              className="w-full mt-4 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors text-sm"
             >
-              {loading ? "Loading..." : emailSubmitted ? "Create account" : "Continue"}
+              {loading ? "Loading..." : step === "email" ? "Continue" : "Create account"}
             </button>
 
-            {/* Back Button */}
-            {emailSubmitted && (
+            {/* Back */}
+            {step === "details" && (
               <button
                 type="button"
-                onClick={() => setEmailSubmitted(false)}
+                onClick={() => setStep("email")}
                 className="w-full text-blue-600 font-semibold hover:text-blue-700 py-2 text-sm"
               >
                 Back
               </button>
             )}
-            
-            {/* Error Message */}
+
+            {/* Error */}
             {error && <p className="text-red-500 text-sm">{error}</p>}
           </form>
 
-          {/* Social Sign Up and Links (Only visible before email submitted) */}
-          {!emailSubmitted && (
+          {/* Social signup */}
+          {step === "email" && (
             <>
               <p className="pt-3 text-xs sm:text-sm text-gray-700 text-center">
                 Already have an account?{" "}
@@ -259,22 +242,12 @@ export default function SignupPage() {
                 <SocialButton icon={appleIcon} text="Sign up with Apple" />
                 <SocialButton icon={facebookIcon} text="Sign up with Facebook" />
               </div>
-
-              <p className="pt-2 text-xs text-gray-500 text-center">
-                By submitting, I accept Zillow's{" "}
-                <a href="#" className="text-blue-600 hover:underline">
-                  terms of use
-                </a>{" "}
-                and{" "}
-                <a href="#" className="text-blue-600 hover:underline">
-                  privacy policy
-                </a>
-              </p>
             </>
           )}
         </div>
       </div>
 
+      {/* Right image side */}
       <div className="hidden lg:flex lg:flex-1 bg-gray-100 relative overflow-hidden">
         <img
           src="/signin-image.jpg"
@@ -283,5 +256,5 @@ export default function SignupPage() {
         />
       </div>
     </div>
-  )
+  );
 }
